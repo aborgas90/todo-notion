@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  user_id   String    @id @default(uuid())
+  email     String    @unique
+  username  String    @unique
+  password  String    @db.VarChar(100)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  token     String?   @db.VarChar(100)
+  project   Project[] @relation("ProjectOwners")
+  task      Task[]    @relation("UserTasks")
+}
+
+model Project {
+  project_id  String    @id @default(uuid())
+  projectname String?   @db.VarChar(100)
+  description String?   @db.VarChar(100)
+  createdAt   DateTime  @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime  @updatedAt
+  expiresAt   DateTime? @db.Timestamp(3)
+  owner       user[]    @relation("ProjectOwners")
+  task        Task[]
+}
+
+model Task {
+  task_id     String       @id @default(uuid())
+  title       String?      @db.VarChar(100)
+  description String?      @db.VarChar(100)
+  status      TaskStatus?
+  priority    TaskPriority?
+  project     Project?     @relation(fields: [projectId], references: [project_id])
+  projectId   String?
+  Assignee    user?        @relation("UserTasks", fields: [user_id], references: [user_id])
+  user_id     String?
+  createdAt   DateTime     @default(now()) @db.Timestamp(3)
+  updatedAt   DateTime     @updatedAt
+  expiresAt   DateTime?    @db.Timestamp(3)
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}

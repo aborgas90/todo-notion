@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `task` MODIFY `status` ENUM('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED') NULL,
+    MODIFY `priority` ENUM('LOW', 'MEDIUM', 'HIGH') NULL;
