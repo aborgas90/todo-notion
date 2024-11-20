@@ -14,22 +14,31 @@ const {
 
 const createProjectHandler = async (req, res, next) => {
   try {
-    const { projectname, description, owner, expiresAt } = req.body;
+    const { projectname, description, expiresAt, owner } = req.body;
     console.log("Request body:", req.body);
 
     if (!owner) {
-      throw new Error("User ID is required for connecting an owner.");
+      res.status(400).json({
+        errors: "Owner ID is missing",
+        message: "User ID is required for connecting an owner.",
+      });
+    }else if (!Array.isArray(owner) || owner.length === 0) {
+      res.status(400).json({
+        errors: "Owner ID is missing",
+        message: "User ID is required for connecting an owner.",
+      });
     }
+
     const createNewProject = await createProject({
       projectname,
       description,
-      owner,
       expiresAt,
+      owner,
     });
 
     res.status(201).json({ status: 201, data: createNewProject });
   } catch (error) {
-    console.log(error);
+    console.error("Error in createProjectHandler:", error);
     next(error);
   }
 };
@@ -45,12 +54,10 @@ const getProjectByIdHandler = async (req, res, next) => {
     const project = await getProject(projectId);
 
     if (!project) {
-      return res
-        .status(404)
-        .json({
-          error: "Project not found",
-          message: "No project found for the given owner ID",
-        });
+      return res.status(404).json({
+        error: "Project not found",
+        message: "No project found for the given owner ID",
+      });
     }
     return res.status(200).json(project);
   } catch (error) {
@@ -91,7 +98,7 @@ const deleteProjectHandler = async (req, res, next) => {
     const projectId = req.params.projectId;
     // Await the result of findProjectID to ensure it completes
     const findProject = await findProjectID(projectId);
-    console.log("idnya paa :::" , findProject)
+    console.log("idnya paa :::", findProject);
     if (!findProject) {
       return res
         .status(404)

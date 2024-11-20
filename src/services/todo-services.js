@@ -5,8 +5,8 @@ const { ResponseError } = require("../error/error-response");
 const createProject = async ({
   projectname,
   description,
-  owner,
   expiresAt,
+  owner,
 }) => {
   try {
     const userConnections =
@@ -47,7 +47,7 @@ const createProject = async ({
 
     return createdProject;
   } catch (error) {
-    console.error("Error creating project:", error);
+    console.log("Error creating project:", error);
     throw error;
   }
 };
