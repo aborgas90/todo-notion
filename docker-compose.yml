@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    container_name: todo-notion-app
+    ports:
+      - "3040:3040"
+    environment:
+      - ${DATABASE_URL}
+    depends_on:
+      - mysql
+    command: /wait-for-it.sh todo-notion-db:3306 -- npm start
+
+  mysql:
+    image: mysql:8.0
+    container_name: todo-notion-db
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_ROOT_PASSWORD:  ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
