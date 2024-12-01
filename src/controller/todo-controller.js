@@ -149,16 +149,17 @@ const createTaskHandler = async (req, res, next) => {
 const getTaskByIdHandler = async (req, res, next) => {
   try {
     const task_id = req.params.taskId;
+    console.log("task id :: ",task_id)
     // Check if taskId is provided
     if (!task_id) {
       return res
         .status(400)
-        .json({ status: 400, error: "Task ID is required" });
+        .json({ status: 400, errors: "Task ID is required" });
     }
     // Find the task by ID
     const task = await getTaskById(task_id);
     if (!task) {
-      return res.status(404).json({ status: 404, error: "Task Not Found" });
+      return res.status(404).json({ status: 404, errors: "Task Not Found" });
     }
     // Return the found task
     res.status(200).json({

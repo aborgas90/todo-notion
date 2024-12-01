@@ -16,14 +16,14 @@ todoRouter.use(authenticationMiddleware);
 
 //task
 todoRouter.post("/project/task/", createTaskHandler);
-todoRouter.get("/project/task/:taskId", getTaskByIdHandler);
+todoRouter.get("/project/task/:taskId?", getTaskByIdHandler);
 todoRouter.put("/project/task/:taskId?", editTaskHandler);
 todoRouter.delete("/project/task/:taskId?", deleteTaskHandler);
 
 
 //project
 todoRouter.post("/project", createProjectHandler);
-todoRouter.get("/project/:projectId", getProjectByIdHandler);
+todoRouter.get("/project/:projectId?", getProjectByIdHandler);
 todoRouter.put("/project/:projectId?", editProjectHandler);
 todoRouter.delete("/project/:projectId", deleteProjectHandler);
 module.exports = todoRouter;

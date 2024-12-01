@@ -227,10 +227,6 @@ const createTask = async ({
 
 const getTaskById = async (task_id) => {
   try {
-    if (!task_id) {
-      throw new Error("task ID is required");
-    }
-
     const task = await prismaClient.task.findUnique({
       where: { task_id : task_id},
       include : {

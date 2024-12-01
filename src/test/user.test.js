@@ -77,11 +77,13 @@ describe("POST /api/v1/users/register", function () {
 
 describe("POST /api/v1/users/login", function () {
   beforeEach(async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     await createTestUser();
   });
 
   afterEach(async () => {
     await removeTestUser();
+    console.error.mockRestore();
   });
 
   it("should can login ", async () => {

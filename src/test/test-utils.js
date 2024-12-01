@@ -74,19 +74,40 @@ const createTestTask = async () => {
     throw new Error("Test user not found, cannot create project.");
   }
 
-  return prismaClient.project.create({
+  return prismaClient.task.create({
     data: {
-      projectname: "test project",
-      description: "test decription",
+      title: "test",
+      description: "test",
+      status: "COMPLETED",
+      priority: "LOW",
+      projectId: "",
+      assigneeId: "",
       expiresAt: "05 October 2025 14:48 UTC",
-      owner: [
-        {
-          user_id: testUser.user_id,
-        },
-      ],
     },
   });
 };
+
+const getTestTaskByID =  async (task_id) => {
+  if (!task_id) {
+    throw new Error("task test ID is required");
+  }
+
+  await prismaClient.task.findUnique({
+    where: { task_id : task_id},
+    include : {
+      project : {
+        select : {
+          projectname : true
+        }
+      },
+      Assignee : {
+        select : {
+          username : true
+        }
+      }
+    },
+  });
+}
 
 const removeTestTask = async (titleName) => {
   await prismaClient.task.deleteMany({
@@ -104,5 +125,6 @@ module.exports = {
   createTestProject,
   removeTestProject,
   createTestTask,
+  getTestTaskByID,
   removeTestTask
 };

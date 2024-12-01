@@ -26,6 +26,7 @@ describe("POST /api/v1/project/", function () {
     try {
       await removeTestUser();
       await removeTestProject("test project");
+      await removeTestProject("");
     } catch (error) {
       console.error("Error during cleanup:", error);
     }
@@ -68,4 +69,10 @@ describe("POST /api/v1/project/", function () {
     expect(result.body.data.description).toBe("");
     expect(result.body.data.expiresAt).toBe(null);
   });
+
+  //errors case
 });
+
+//GET project/task/:taskId?
+//PUT /project/task/:taskId?
+//DELETE /project/task/:taskId?
