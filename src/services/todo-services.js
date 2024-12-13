@@ -33,6 +33,28 @@ const createProject = async ({
       }),
     };
 
+    if (userConnections && userConnections.length > 0) {
+      // Extract all user IDs
+      const userIds = userConnections.map((connection) => connection.user_id);
+
+      // Validate that all user IDs exist in the database
+      const existingUsers = await prismaClient.user.findMany({
+        where: { user_id: { in: userIds } },
+        select: { user_id: true },
+      });
+
+      const existingUserIds = existingUsers.map((user) => user.user_id);
+      const missingUserIds = userIds.filter(
+        (id) => !existingUserIds.includes(id)
+      );
+
+      if (missingUserIds.length > 0) {
+        throw new ResponseError(404,
+          `User Id not found`
+        );
+      }
+    }
+
     const createdProject = await prismaClient.project.create({
       data,
       include: {
@@ -55,7 +77,7 @@ const createProject = async ({
 //getvalueprojectbyownerid
 const getProject = async (projectId) => {
   try {
-    const project = await prismaClient.project.findMany({
+    const project = await prismaClient.project.findUnique({
       where: {
         project_id: projectId,
       },
@@ -74,6 +96,25 @@ const getProject = async (projectId) => {
     console.log(error);
   }
 };
+
+const getAllProject = async () => {
+  try {
+    return await prismaClient.project.findMany(
+      {
+        include: {
+          owner: {
+            select: {
+              user_id: true,
+              username: true, // Adjust according to your user model fields
+            },
+          },
+        },
+      }
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 //editproject
 const editproject = async (project_id, projectname, description, owner) => {
@@ -344,6 +385,7 @@ const findTaskById = async (task_id) => {
 module.exports = {
   createProject,
   getProject,
+  getAllProject,
   editproject,
   deleteProjectById,
   findProjectID,

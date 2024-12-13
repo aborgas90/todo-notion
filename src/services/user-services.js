@@ -63,9 +63,6 @@ const createUser = async ({ user_id, username, email, password }) => {
         password: passwordHashed,
       },
     });
-
-    console.log("Buat User Register ::",createUser)
-
     return createUser;
   } catch (error) {
     console.log("Error Creating User", error);

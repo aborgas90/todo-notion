@@ -10,6 +10,7 @@ const {
   editTask,
   findTaskById,
   deleteTask,
+  getAllProject,
 } = require("../services/todo-services");
 
 const createProjectHandler = async (req, res, next) => {
@@ -49,13 +50,13 @@ const getProjectByIdHandler = async (req, res, next) => {
     if (!projectId) {
       return res
         .status(400)
-        .json({ error: "Invalid project ID", message: "Invalid Request" });
+        .json({ errors: "Invalid project ID", message: "Invalid Request" });
     }
     const project = await getProject(projectId);
 
     if (!project) {
       return res.status(404).json({
-        error: "Project not found",
+        errors: "Project not found",
         message: "No project found for the given owner ID",
       });
     }
@@ -65,6 +66,16 @@ const getProjectByIdHandler = async (req, res, next) => {
     next();
   }
 };
+
+const getAllProjectHandler = async (req, res, next) => {
+  try {
+    const result = await getAllProject()
+    return res.status(200).json({status: 200, data: result})
+  } catch (error) {
+    console.log(error)
+    next()
+  }
+}
 
 const editProjectHandler = async (req, res, next) => {
   try {
@@ -242,6 +253,7 @@ const deleteTaskHandler = async (req, res, next) => {
 
 module.exports = {
   createProjectHandler,
+  getAllProjectHandler,
   getProjectByIdHandler,
   editProjectHandler,
   deleteProjectHandler,

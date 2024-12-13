@@ -56,7 +56,7 @@ describe("POST /api/v1/project/task/", function async() {
   });
 });
 
-describe("GET /project/task/:taskId", function async(){
+describe("GET /api/v1/project/task/:taskId", function async(){
   beforeEach(async () => {
     await createTestUser();
   });
@@ -138,7 +138,7 @@ describe("GET /project/task/:taskId", function async(){
   })
 })
 
-describe("PUT /project/task/:taskId?", function async() {
+describe("PUT /api/v1/project/task/:taskId?", function async() {
   beforeEach(async () => {
     await createTestUser();
   });
