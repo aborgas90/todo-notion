@@ -47,7 +47,7 @@ const createProjectHandler = async (req, res, next) => {
 const getProjectByIdHandler = async (req, res, next) => {
   try {
     const projectId = req.params.projectId;
-    
+
     // if (!projectId) {
     //   return res
     //     .status(400)
@@ -115,7 +115,7 @@ const deleteProjectHandler = async (req, res, next) => {
     if (!findProject) {
       return res
         .status(404)
-        .json({ error: "Invalid Project ID", message: "Project not found" });
+        .json({ errors: "Invalid Project ID", message: "Project not found" });
     }
 
     // Proceed to delete the project

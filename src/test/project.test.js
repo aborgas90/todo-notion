@@ -4,6 +4,7 @@ const {
   removeTestUser,
   removeTestProject,
   getTestUserID,
+  createTestProject,
 } = require("./test-utils");
 const app = require("../app");
 const { logger } = require("../logging");
@@ -125,19 +126,6 @@ describe("GET /api/v1/project/:projectId?", function () {
     expect(result.body).toHaveProperty("expiresAt", "2025-10-05T14:48:00.000Z");
   });
 
-  //error case
-  // it("should cant get data returning error with empty projectid", async () => {
-  //   let projectId = ''
-  //   const result = await supertest(app)
-  //   .get(`/api/v1/project/${projectId}`)
-  //   .set("Authorization", "test");
-
-  //   logger.info(result.body)
-  //   expect(result.status).toBe(400)
-  //   expect(result.body.errors).toBe("Invalid project ID");
-  //   expect(result.body.message).toBe("Invalid Request")
-  // })
-
   it("should cant get data returning error with not found projectid", async () => {
     let projectId = "412";
     const result = await supertest(app)
@@ -199,7 +187,61 @@ describe("PUT /api/v1/project/:projectId?", function () {
   })
 
   //error case
-  
+
 });
 
 //DELETE /project/:projectId?
+describe("DELETE /project/:projectId", function () {
+  beforeEach(async () => {
+    await createTestUser();
+  });
+
+  afterEach(async () => {
+    try {
+      await removeTestUser();
+      await removeTestProject("test project");
+      await removeTestProject("");
+    } catch (error) {
+      console.error("Error during cleanup:", error);
+    }
+  });
+
+  it("should delete a project by projectid",  async () => {
+    let projectId;
+    // Create a test project using the createTestProject function
+    const createdProject = await createTestProject();
+
+    // Log project ID for debugging
+    projectId = createdProject.project_id; // Assuming project_id is returned from the createTestProject
+
+    console.log("Created Project ID:", projectId);
+    
+    const result = await supertest(app)
+    .delete(`/api/v1/project/${projectId}`)
+    .set("Authorization", "test")
+
+    logger.info(result)
+    expect(result.status).toBe(204)
+  })
+
+  //error case
+  it("should'nt delete a project by projectid bcs project not found",  async () => {
+    let projectId;
+    // Create a test project using the createTestProject function
+    const createdProject = await createTestProject();
+
+    // Log project ID for debugging
+    projectId = createdProject.project_id; // Assuming project_id is returned from the createTestProject
+
+    console.log("Created Project ID:", projectId);
+    
+    const result = await supertest(app)
+    .delete(`/api/v1/project/${projectId}+1`)
+    .set("Authorization", "test")
+
+    logger.info(result)
+    expect(result.status).toBe(404)
+    expect(result.body.errors).toBe("Invalid Project ID")
+    expect(result.body.message).toBe("Project not found")
+  })
+})

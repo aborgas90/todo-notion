@@ -51,11 +51,13 @@ const createTestProject = async () => {
       projectname: "test project",
       description: "test decription",
       expiresAt: "2025-10-05T14:48:00.000Z",
-      owner: [
-        {
-          user_id: testUser.user_id,
-        },
-      ],
+      owner: {
+        connect : [
+          {
+            user_id: testUser.user_id,
+          }
+        ]
+      },
     },
   });
 };
