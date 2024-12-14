@@ -47,14 +47,16 @@ const createProjectHandler = async (req, res, next) => {
 const getProjectByIdHandler = async (req, res, next) => {
   try {
     const projectId = req.params.projectId;
-    if (!projectId) {
-      return res
-        .status(400)
-        .json({ errors: "Invalid project ID", message: "Invalid Request" });
-    }
+    
+    // if (!projectId) {
+    //   return res
+    //     .status(400)
+    //     .json({ errors: "Invalid project ID", message: "Invalid Request" });
+    // }
+
     const project = await getProject(projectId);
 
-    if (!project) {
+    if (!project)  {
       return res.status(404).json({
         errors: "Project not found",
         message: "No project found for the given owner ID",

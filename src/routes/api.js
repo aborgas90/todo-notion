@@ -27,7 +27,7 @@ todoRouter.delete("/project/task/:taskId?", deleteTaskHandler);
 //new project clearing the rout path with bestpractice 
 todoRouter.post("/project", createProjectHandler);
 todoRouter.get("/project/",getAllProjectHandler)
-todoRouter.get("/project/:projectId?", getProjectByIdHandler);
-todoRouter.put("/project/:projectId?", editProjectHandler);
+todoRouter.get("/project/:projectId", getProjectByIdHandler);
+todoRouter.put("/project/:projectId", editProjectHandler);
 todoRouter.delete("/project/:projectId", deleteProjectHandler);
 module.exports = todoRouter;

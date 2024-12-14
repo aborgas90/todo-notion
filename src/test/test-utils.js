@@ -50,7 +50,7 @@ const createTestProject = async () => {
     data: {
       projectname: "test project",
       description: "test decription",
-      expiresAt: "05 October 2025 14:48 UTC",
+      expiresAt: "2025-10-05T14:48:00.000Z",
       owner: [
         {
           user_id: testUser.user_id,

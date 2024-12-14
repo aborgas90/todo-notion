@@ -33,7 +33,7 @@ describe("POST /api/v1/project/", function () {
   });
 
   it("should can create project", async () => {
-    const userID = await getTestUserID()
+    const userID = await getTestUserID();
     const result = await supertest(app)
       .post("/api/v1/project/")
       .set("Authorization", "test")
@@ -41,9 +41,7 @@ describe("POST /api/v1/project/", function () {
         projectname: "test project",
         description: "test description",
         expiresAt: "05 October 2025 14:48 UTC",
-        owner: [
-          userID,
-        ],
+        owner: [userID],
       });
     logger.info(result.body);
     expect(result.status).toBe(201);
@@ -70,7 +68,7 @@ describe("POST /api/v1/project/", function () {
   });
 
   //errors case
-  it('it shouldn`t create a project user id not found', async () => {
+  it("it shouldn`t create a project user id not found", async () => {
     const invalidUserID = "nonexistent-user-id";
     const result = await supertest(app)
       .post("/api/v1/project/")
@@ -79,17 +77,15 @@ describe("POST /api/v1/project/", function () {
         projectname: "test project",
         description: "test description",
         expiresAt: "05 October 2025 14:48 UTC",
-        owner: [
-          {user_id : invalidUserID},
-        ],
+        owner: [{ user_id: invalidUserID }],
       });
     logger.info(result.body);
     expect(result.status).toBe(404);
     expect(result.body.errors).toBe("User Id not found");
-  })
+  });
 });
 
-describe("GET /api/v1/project/:projectId?", function(){
+describe("GET /api/v1/project/:projectId?", function () {
   beforeEach(async () => {
     await createTestUser();
   });
@@ -104,61 +100,106 @@ describe("GET /api/v1/project/:projectId?", function(){
     }
   });
 
-
   it("should can get data project by id ", async () => {
-    let projectId
+    let projectId;
     const createProject = await supertest(app)
-    .post("/api/v1/project/")
-    .set("Authorization", "test")
-    .send({
-      projectname: "test project",
-      description: "test description",
-      expiresAt: "05 October 2025 14:48 UTC",
-      owner: [
-        {}
-      ],
-    })
+      .post("/api/v1/project/")
+      .set("Authorization", "test")
+      .send({
+        projectname: "test project",
+        description: "test description",
+        expiresAt: "05 October 2025 14:48 UTC",
+        owner: [{}],
+      });
 
-    projectId = createProject.body.data.project_id
+    projectId = createProject.body.data.project_id;
     const result = await supertest(app)
-    .get(`/api/v1/project/${projectId}`)
-    .set("Authorization", "test");
+      .get(`/api/v1/project/${projectId}`)
+      .set("Authorization", "test");
 
-    logger.info(result.body)
+    logger.info(result.body);
 
-    expect(result.status).toBe(200)
+    expect(result.status).toBe(200);
     expect(result.body).toHaveProperty("projectname", "test project");
     expect(result.body).toHaveProperty("description", "test description");
     expect(result.body).toHaveProperty("expiresAt", "2025-10-05T14:48:00.000Z");
+  });
+
+  //error case
+  // it("should cant get data returning error with empty projectid", async () => {
+  //   let projectId = ''
+  //   const result = await supertest(app)
+  //   .get(`/api/v1/project/${projectId}`)
+  //   .set("Authorization", "test");
+
+  //   logger.info(result.body)
+  //   expect(result.status).toBe(400)
+  //   expect(result.body.errors).toBe("Invalid project ID");
+  //   expect(result.body.message).toBe("Invalid Request")
+  // })
+
+  it("should cant get data returning error with not found projectid", async () => {
+    let projectId = "412";
+    const result = await supertest(app)
+      .get(`/api/v1/project/${projectId}`)
+      .set("Authorization", "test");
+
+    logger.info(result.body);
+    expect(result.status).toBe(404);
+    expect(result.body.errors).toBe("Project not found");
+    expect(result.body.message).toBe("No project found for the given owner ID");
+  });
+});
+
+//PUT /project/:projectId?
+describe("PUT /api/v1/project/:projectId?", function () {
+  beforeEach(async () => {
+    await createTestUser();
+  });
+
+  afterEach(async () => {
+    try {
+      await removeTestUser();
+      await removeTestProject("test project");
+      await removeTestProject("test update project");
+      await removeTestProject("");
+    } catch (error) {
+      console.error("Error during cleanup:", error);
+    }
+  });
+
+  it("should update value on data project", async () => {
+    const userID = await getTestUserID();
+    const createProject = await supertest(app)
+      .post("/api/v1/project/")
+      .set("Authorization", "test")
+      .send({
+        projectname: "test project",
+        description: "test description",
+        expiresAt: "05 October 2025 14:48 UTC",
+        owner: [userID],
+      });
+
+    const projectId = createProject.body.data.project_id;
+    const updateData = await supertest(app)
+      .put(`/api/v1/project/${projectId}`)
+      .set("Authorization", "test")
+      .send({
+        projectname: "test update project",
+        description: "test update description",
+        expiresAt: "06 October 2025 14:48 UTC",
+        owner: [userID],
+      });
+    
+    expect(updateData.status).toBe(201)
+    expect(updateData.body).toHaveProperty("message", "Project Succesfully to Update");
+    expect(updateData.body.updateProject).toHaveProperty("projectname", "test update project");
+    expect(updateData.body.updateProject).toHaveProperty("description", "test update description");
+    expect(updateData.body.updateProject).toHaveProperty("expiresAt", "2025-10-05T14:48:00.000Z");
   })
 
   //error case
-  it("should cant get data returning error with empty projectid", async () => {
-    let projectId = ''
-    const result = await supertest(app)
-    .get(`/api/v1/project/${projectId}`)
-    .set("Authorization", "test");
+  
+});
 
-    logger.info(result.body)
-    expect(result.status).toBe(400)
-    expect(result.body.errors).toBe("Invalid project ID");
-    expect(result.body.message).toBe("Invalid Request")
-  })
-
-  it("should cant get data returning error with not found projectid", async () => {
-    let projectId = '412'
-    const result = await supertest(app)
-    .get(`/api/v1/project/${projectId}`)
-    .set("Authorization", "test");
-
-    logger.info(result.body)
-    expect(result.status).toBe(404)
-    expect(result.body.errors).toBe("Project not found");
-    expect(result.body.message).toBe("No project found for the given owner ID")
-  })
-})
-
-
-
-//PUT /project/:projectId?
 //DELETE /project/:projectId?
