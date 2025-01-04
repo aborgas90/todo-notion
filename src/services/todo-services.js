@@ -14,8 +14,6 @@ const createProject = async ({
         ? owner.filter((o) => o.user_id).map((o) => ({ user_id: o.user_id }))
         : null;
 
-    console.log();
-
     // Parse the input date string using Date constructor
     // Check if `expiresAt` is provided and is a valid date
     const timestamp = expiresAt ? new Date(expiresAt).toISOString() : null;
@@ -381,6 +379,7 @@ const findTaskById = async (task_id) => {
     throw error;
   }
 };
+
 
 module.exports = {
   createProject,

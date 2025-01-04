@@ -1,4 +1,5 @@
 const { ResponseError } = require("../error/error-response");
+const prismaClient = require("../prisma-client");
 const {
   createProject,
   getProject,
@@ -143,6 +144,29 @@ const createTaskHandler = async (req, res, next) => {
       assigneeId,
       expiresAt,
     } = req.body;
+
+    //check a project id is exist or not if not exist return  a null
+    if (projectId) {
+      const project = await prismaClient.project.findUnique({
+        where: { project_id : projectId}
+      })
+
+      if (!project) {
+        return res.status(404).json({ status: 404, errors : "Invalid Project Id", message: "Project not found." });
+      }
+    }
+
+    if (assigneeId) {
+      const assignee = await prismaClient.user.findUnique({
+        where: { user_id: assigneeId },
+      });
+    
+      if (!assignee) {
+        return res.status(404).json({ status: 404,errors : "Invalid Assignee Id", message: "Assignee not found." });
+      }
+    }
+    
+
     const newTask = await createTask({
       title,
       description,

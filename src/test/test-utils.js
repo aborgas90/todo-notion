@@ -71,7 +71,7 @@ const removeTestProject = async (projectName) => {
 };
 
 const createTestTask = async () => {
-  const testUser = await getTestUser(); // Ensure this retrieves the user
+  const testUser = await getTestUser();
   if (!testUser) {
     throw new Error("Test user not found, cannot create project.");
   }
@@ -82,9 +82,9 @@ const createTestTask = async () => {
       description: "test",
       status: "COMPLETED",
       priority: "LOW",
-      projectId: "",
-      assigneeId: "",
-      expiresAt: "05 October 2025 14:48 UTC",
+      projectId: null,  // Tidak menghubungkan task ke proyek
+      user_id: null, 
+      expiresAt: "2025-10-05T14:48:00.000Z",
     },
   });
 };
